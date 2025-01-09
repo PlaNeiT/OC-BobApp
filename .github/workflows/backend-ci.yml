@@ -1,0 +1,48 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend-pipeline:
+    name: Backend CI/CD Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      # Etape 1 : Cloner le repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Etape 2 : Configurer Java
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: ''
+
+      # Etape 3 : Installer les dependances Maven
+      - name: Build with Maven
+        run: mvn clean install
+        working-directory: back
+
+      # Etape 4 : Executer les tests
+      - name: Run tests
+        run: mvn test
+        working-directory: back
+
+      # Etape 4.1 : Generer le rapport Jacoco
+      - name: Generate Jacoco Report
+        run: mvn jacoco:report
+        working-directory: back
+
+      # Etape 4.2 : Upload le rapport Jacoco
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-coverage-report
+          path: back/target/site/jacoco
