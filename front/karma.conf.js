@@ -38,7 +38,13 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: ['Brave'],
+    customLaunchers: {
+      Brave: {
+        base: 'Chrome',
+        flags: ['--no-sandbox', '--disable-gpu', '--headless'] // Mode Headless
+      }
+    },
     singleRun: false,
     restartOnFileChange: true
   });
