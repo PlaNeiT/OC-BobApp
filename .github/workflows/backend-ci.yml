@@ -43,7 +43,16 @@ jobs:
       - name: Run Tests and Generate Jacoco Report
         run: mvn clean verify jacoco:report
 
-      # Étape 5 : Upload le rapport de couverture
+      # Etape 5 : Analyse avec SonarQube
+      - name: Run SonarQube analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          -Dsonar.projectKey=PlaNeiT_OC-BobApp_AZRVqWSRtdt3Mi-17jOl
+
+      # Etape 6 : Upload du rapport Jacoco
       - name: Upload Jacoco Coverage Report
         uses: actions/upload-artifact@v4
         with:

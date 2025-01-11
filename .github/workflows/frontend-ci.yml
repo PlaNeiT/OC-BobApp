@@ -30,7 +30,15 @@ jobs:
         with:
           node-version: 18
 
-      # Etape 3 : Installer les dependances
+      # Etape 3 : Mise en cache des dependances Node.js
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-modules
+
+      # Étape 4 : Installer les dépendances
       - name: Install dependencies
         run: npm install
 
@@ -38,8 +46,25 @@ jobs:
       - name: Run Tests and Generate Coverage Report
         run: npm run test -- --watch=false --code-coverage
 
-      # Etape 5 : Upload le rapport de couverture
-      - name: Upload coverage report
+      # Etape 6 : Analyse avec SonarQube
+      - name: Run SonarQube analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=PlaNeiT_OC-BobApp_AZRVqWSRtdt3Mi-17jOl \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.sources=src \
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts \
+            -Dsonar.tests=src \
+            -Dsonar.test.inclusions=**/*.spec.ts \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      # Etape 7 : Upload du rapport de couverture
+      - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage-report
