@@ -20,7 +20,9 @@ jobs:
     steps:
       # Etape 1 : Cloner le repository
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Etape 2 : Configurer Java
       - name: Setup Java
@@ -29,13 +31,17 @@ jobs:
           java-version: 11
           distribution: temurin # Options: temurin, zulu, adopt, etc.
 
-      # Etape 3 : Installer les dependances Maven
-      - name: Build with Maven
-        run: mvn clean install
+      # Etape 3 : Cache Maven packages
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-      # Etape 4 : Executer les tests
-      - name: Run tests
-        run: mvn test
+      # Etape 4 : Construire et exécuter les tests
+      - name: Build and Test with Maven
+        run: mvn clean verify
 
       # Etape 4.1 : Generer le rapport Jacoco
       - name: Generate Jacoco Report
@@ -43,7 +49,15 @@ jobs:
 
       # Etape 4.2 : Upload le rapport Jacoco
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-coverage-report
           path: back/target/site/jacoco
+
+      # Etape 5 : Analyse SonarQube
+      - name: Run SonarQube analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn sonar:sonar -Dsonar.projectKey=PlaNeiT_OC-BobApp_AZRVqWSRtdt3Mi-17jOl

@@ -21,6 +21,8 @@ jobs:
       # Etape 1 : Cloner le repository
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Etape 2 : Configurer Node.js
       - name: Setup Node.js
@@ -32,17 +34,31 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Etape 5 : Exécuter les tests
-      - name: Run tests
+      # Etape 4 : Exécuter les tests avec couverture
+      - name: Run tests with coverage
         run: npm run test -- --code-coverage
 
-      # Etape 5.1 : Upload le rapport de couverture
+      # Etape 4.1 : Upload le rapport de couverture
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-            name: frontend-coverage-report
-            path: front/coverage/bobapp/*
+          name: frontend-coverage-report
+          path: front/coverage/bobapp
 
-        # Etape 5 : Build l'application
+      # Etape 5 : Build l'application
       - name: Build the project
         run: npm run build
+
+      # Etape 6 : Analyse SonarQube
+      - name: Run SonarQube analysis
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=PlaNeiT_OC-BobApp_AZRVqWSRtdt3Mi-17jOl \
+            -Dsonar.sources=front/src \
+            -Dsonar.exclusions=**/node_modules/** \
+            -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/lcov.info \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
