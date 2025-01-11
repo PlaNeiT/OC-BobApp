@@ -39,25 +39,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # Etape 4 : Construire et exécuter les tests
-      - name: Build and Test with Maven
-        run: mvn clean verify
+      # Etape 4 : Lancer les tests et generer le rapport de couverture
+      - name: Run Tests and Generate Jacoco Report
+        run: mvn clean verify jacoco:report
 
-      # Etape 4.1 : Generer le rapport Jacoco
-      - name: Generate Jacoco Report
-        run: mvn jacoco:report
-
-      # Etape 4.2 : Upload le rapport Jacoco
-      - name: Upload coverage report
+      # Étape 5 : Upload le rapport de couverture
+      - name: Upload Jacoco Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage-report
-          path: back/target/site/jacoco
-
-      # Etape 5 : Analyse SonarQube
-      - name: Run SonarQube analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn sonar:sonar -Dsonar.projectKey=PlaNeiT_OC-BobApp_AZRVqWSRtdt3Mi-17jOl
+          path: target/site/jacoco
