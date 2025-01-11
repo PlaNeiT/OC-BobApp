@@ -29,9 +29,14 @@ jobs:
         run: npm ci
         working-directory: front
 
-      # Etape 4 : Executer les tests
-      - name: Run tests
-        run: npm test
+      # Etape 4 : Nettoyer les vulnérabilités npm
+      - name: Fix npm vulnerabilities
+        run: npm audit fix
+        working-directory: front
+
+      # Etape  : Exécuter les tests
+      - name: Run tests with coverage
+        run: npm test -- --code-coverage
         working-directory: front
 
       # Etape 4.1 : Generer le rapport de couverture

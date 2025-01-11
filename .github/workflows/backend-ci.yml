@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: ''
+          distribution: temurin # Options: temurin, zulu, adopt, etc.
 
       # Etape 3 : Installer les dependances Maven
       - name: Build with Maven
