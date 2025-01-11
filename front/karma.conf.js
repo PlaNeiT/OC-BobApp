@@ -29,7 +29,8 @@ module.exports = function (config) {
       subdir: '.',
       reporters: [
         { type: 'html' },
-        { type: 'text-summary' }
+        { type: 'text-summary' },
+        { type: 'lcov', subdir: 'lcov-report' }
       ]
     },
     reporters: ['progress', 'kjhtml'],
@@ -37,13 +38,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Brave'],
-    customLaunchers: {
-      Brave: {
-        base: 'Chrome',
-        flags: ['--no-sandbox', '--disable-gpu', '--headless'] // Mode Headless
-      }
-    },
+    browsers: ['Chrome'],
     singleRun: false,
     restartOnFileChange: true
   });
