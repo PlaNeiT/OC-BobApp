@@ -5,12 +5,11 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize, reopened]
 
 jobs:
   frontend-pipeline:
-    name: Frontend CI/CD Pipeline
+    name: Build and analyze frontend
     runs-on: ubuntu-latest
 
     defaults:
@@ -22,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
 
       # Etape 2 : Configurer Node.js
       - name: Setup Node.js
@@ -45,18 +44,15 @@ jobs:
           name: frontend-coverage-report
           path: front/coverage
 
-      # Étape 6 : Analyse avec SonarQube
-      - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        with:
-          args: >
-            -Dsonar.projectKey=PlaNeiT_OC-BobApp_AZRVqWSRtdt3Mi-17jOl
-            -Dsonar.sources=src
-            -Dsonar.tests=src
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
-            -Dsonar.test.inclusions=**/*.spec.ts
+      # Etape 6 : Analyse avec SonarCloud
+      - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=PlaNeiT_OC-BobApp \
+            -Dsonar.sources=src \
+            -Dsonar.tests=src \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts \
+            -Dsonar.test.inclusions=**/*.spec.ts
