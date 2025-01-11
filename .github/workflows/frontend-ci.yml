@@ -51,8 +51,8 @@ jobs:
           args: >
             -Dsonar.projectKey=PlaNeiT_OC-BobApp
             -Dsonar.organization=planeit
-            -Dsonar.sources=src
-            -Dsonar.tests=src
+            -Dsonar.sources=front/src
+            -Dsonar.tests=front/src
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
             -Dsonar.test.inclusions=**/*.spec.ts
