@@ -9,7 +9,7 @@ on:
 
 jobs:
   frontend-pipeline:
-    name: Build and analyze frontend
+    name: Frontend CI/CD Pipeline
     runs-on: ubuntu-latest
 
     defaults:
@@ -44,15 +44,17 @@ jobs:
           name: frontend-coverage-report
           path: front/coverage
 
-      # Etape 6 : Analyse avec SonarCloud
-      - name: Build and analyze
+      # Étape 6 : Analyse avec SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v4
+        with:
+          args: >
+            -Dsonar.projectKey=PlaNeiT_OC-BobApp
+            -Dsonar.organization=planeit
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
+            -Dsonar.test.inclusions=**/*.spec.ts
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          npx sonar-scanner \
-            -Dsonar.projectKey=PlaNeiT_OC-BobApp \
-            -Dsonar.sources=src \
-            -Dsonar.tests=src \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts \
-            -Dsonar.test.inclusions=**/*.spec.ts
