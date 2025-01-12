@@ -53,7 +53,7 @@ jobs:
             -Dsonar.organization=planeit
             -Dsonar.sources=front/src
             -Dsonar.tests=front/src
-            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov-report/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
             -Dsonar.test.inclusions=**/*.spec.ts
         env:
