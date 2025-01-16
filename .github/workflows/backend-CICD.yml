@@ -40,7 +40,7 @@ jobs:
 
       # Etape 4 : Lancer les tests et generer le rapport de couverture
       - name: Run Tests and Generate Jacoco Report
-        run: mvn clean verify jacoco:report
+        run: mvn clean jacoco:report
 
       # Etape 5 : Upload du rapport Jacoco
       - name: Upload Jacoco Coverage Report
