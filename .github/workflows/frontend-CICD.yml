@@ -57,7 +57,7 @@ jobs:
 
       # Etape 7 : Analyse avec SonarCloud
       - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@v2
+        uses: sonarsource/sonarqube-scan-action@master
         with:
           projectBaseDir: ./front
           args: >
