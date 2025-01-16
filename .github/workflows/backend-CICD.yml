@@ -12,7 +12,7 @@ on:
 jobs:
   backend-pipeline:
     name: Backend CI/CD Pipeline
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     defaults:
       run:

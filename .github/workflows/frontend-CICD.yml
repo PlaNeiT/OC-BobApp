@@ -25,50 +25,60 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
 
-      # Etape 2 : Configurer Node.js
+      # Etape 2 : Cache les dépendances Node.js
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # Étape 3 : Configurer Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # Etape 3 : Installer les dépendances
+      # Etape 4 : Installer les dépendances
       - name: Install dependencies
         run: npm install
 
-      # Etape 4 : Executer les tests avec couverture et generer le rapport
+      # Etape 5 : Executer les tests avec couverture et generer le rapport
       - name: Run Tests and Generate Coverage Report
         run: npm run test -- --watch=false --code-coverage
 
-      # Étape 5 : Upload du rapport de couverture
+      # Étape 6 : Upload du rapport de couverture
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage-report
           path: front/coverage
 
-      # Étape 6 : Analyse avec SonarCloud
+      # Etape 7 : Analyse avec SonarCloud
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v4
+        uses: sonarsource/sonarqube-scan-action@v2
         with:
+          projectBaseDir: ./front
           args: >
             -Dsonar.projectKey=planeit_bobapp-front
             -Dsonar.organization=planeit
-            -Dsonar.sources=front/src
-            -Dsonar.tests=front/src
+            -Dsonar.sources=src
+            -Dsonar.tests=src
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
             -Dsonar.test.inclusions=**/*.spec.ts
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Etape 7 : Login to Docker Hub
+      # Etape 8 : Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Etape 8 : Build and push Docker image (Frontend)
+      # Etape 9 : Build and push Docker image (Frontend)
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
