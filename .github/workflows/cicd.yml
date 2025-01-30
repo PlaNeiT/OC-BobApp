@@ -65,7 +65,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         uses: SonarSource/sonarcloud-github-action@v3.1.0
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACK }}
         with:
           projectBaseDir: ./back
 
@@ -139,7 +139,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         uses: SonarSource/sonarcloud-github-action@v3.1.0
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
         with:
           projectBaseDir: ./front
 
