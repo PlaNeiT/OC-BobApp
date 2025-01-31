@@ -138,7 +138,7 @@ jobs:
         with:
           projectBaseDir: ./front
           args: >
-            -Dsonar.projectKey=planeit_bobapp-front
+            -Dsonar.projectKey=planeit_OC-BobApp_front
             -Dsonar.organization=planeit
             -Dsonar.sources=src
             -Dsonar.tests=src
