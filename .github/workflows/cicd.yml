@@ -63,19 +63,9 @@ jobs:
       # Step 8: Analyze code with SonarCloud (PR only)
       - name: SonarCloud Analysis
         if: ${{ github.event_name == 'pull_request' }}
-        uses: SonarSource/sonarcloud-github-action@v3.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACK }}
-        with:
-          projectBaseDir: ./back
-          args: >
-            -Dsonar.projectKey=planeit_OC-BobApp_back
-            -Dsonar.organization=planeit
-            -Dsonar.projectVersion=1.0.0
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-            -Dsonar.exclusions=node_modules/**,test/**
-            -Dsonar.qualitygate.wait=true
+        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.verbose=true
 
       # Step 9: Login to Docker Hub (Push only)
       - name: Login to Docker Hub
@@ -144,22 +134,21 @@ jobs:
 
       # Step 7: Analyze code with SonarCloud (PR only)
       - name: SonarCloud Scan
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: SonarSource/sonarcloud-github-action@v3.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
+        uses: sonarsource/sonarqube-scan-action@master
         with:
           projectBaseDir: ./front
           args: >
             -Dsonar.projectKey=planeit_OC-BobApp_front
             -Dsonar.organization=planeit
-            -Dsonar.projectVersion=1.0.0
             -Dsonar.sources=src
-            -Dsonar.exclusions=node_modules/**,coverage/**,dist/**
             -Dsonar.tests=src
-            -Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.qualitygate.wait=true
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.verbose=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
+
 
       # Step 8: Login to Docker Hub (Push only)
       - name: Login to Docker Hub
