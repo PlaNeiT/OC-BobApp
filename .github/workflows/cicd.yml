@@ -65,7 +65,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACK }}
-        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.verbose=true
 
       # Step 9: Login to Docker Hub (Push only)
       - name: Login to Docker Hub
@@ -145,6 +145,7 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
             -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
 
