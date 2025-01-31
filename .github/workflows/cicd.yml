@@ -68,6 +68,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACK }}
         with:
           projectBaseDir: ./back
+          args: >
+            -Dsonar.projectKey=planeit_OC-BobApp_back
+            -Dsonar.organization=planeit
+            -Dsonar.projectVersion=1.0.0
+            -Dsonar.java.binaries=target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.exclusions=node_modules/**,test/**
+            -Dsonar.qualitygate.wait=true
 
       # Step 9: Login to Docker Hub (Push only)
       - name: Login to Docker Hub
@@ -142,6 +150,16 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
         with:
           projectBaseDir: ./front
+          args: >
+            -Dsonar.projectKey=planeit_OC-BobApp_front
+            -Dsonar.organization=planeit
+            -Dsonar.projectVersion=1.0.0
+            -Dsonar.sources=src
+            -Dsonar.exclusions=node_modules/**,coverage/**,dist/**
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.qualitygate.wait=true
 
       # Step 8: Login to Docker Hub (Push only)
       - name: Login to Docker Hub
@@ -154,34 +172,6 @@ jobs:
       # Step 9: Build and push Docker image (Push only)
       - name: Build and Push Docker Image
         if: ${{ github.event_name == 'push' }}
-        uses: docker/build-push-action@v4
-        with:
-          context: ./front
-          file: ./front/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-front:latest
-
-  DockerBuild:
-    if: ${{ github.event_name == 'push' }}
-    needs: [Backend, Frontend]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Docker Hub Login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push Backend Image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./back
-          file: ./back/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
-
-      - name: Build and Push Frontend Image
         uses: docker/build-push-action@v4
         with:
           context: ./front
