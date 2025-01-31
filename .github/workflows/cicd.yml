@@ -72,9 +72,9 @@ jobs:
             -Dsonar.projectKey=planeit_OC-BobApp_back
             -Dsonar.organization=planeit
             -Dsonar.projectVersion=1.0.0
-            -Dsonar.java.binaries=target
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-            -Dsonar.exclusions=node_modules/**,test/**
+            -Dsonar.java.binaries=back/target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
+            -Dsonar.exclusions=back/node_modules/**,back/test/**
             -Dsonar.qualitygate.wait=true
 
       # Step 9: Login to Docker Hub (Push only)
