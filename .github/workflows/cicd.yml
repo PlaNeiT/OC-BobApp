@@ -28,7 +28,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 11
           distribution: 'zulu'
 
       # Step 3: Cache Maven dependencies
