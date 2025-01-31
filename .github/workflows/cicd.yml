@@ -28,7 +28,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'zulu'
 
       # Step 3: Cache Maven dependencies
@@ -72,9 +72,9 @@ jobs:
             -Dsonar.projectKey=planeit_OC-BobApp_back
             -Dsonar.organization=planeit
             -Dsonar.projectVersion=1.0.0
-            -Dsonar.java.binaries=back/target/classes
-            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
-            -Dsonar.exclusions=back/node_modules/**,back/test/**
+            -Dsonar.java.binaries=target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.exclusions=node_modules/**,test/**
             -Dsonar.qualitygate.wait=true
 
       # Step 9: Login to Docker Hub (Push only)
